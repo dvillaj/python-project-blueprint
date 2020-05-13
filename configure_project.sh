@@ -1,17 +1,28 @@
-for ARGUMENT in "$@"
+#!/bin/bash
+
+usage () { echo "./configure_project.sh -m <module> [ -r <docker registry> ] "; }
+
+while getopts hm:r: option
 do
-
-    KEY=$(echo $ARGUMENT | cut -f1 -d=)
-    VALUE=$(echo $ARGUMENT | cut -f2 -d=)   
-
-    case "$KEY" in
-            MODULE)      MODULE=${VALUE} ;;
-            REGISTRY)    REGISTRY=${VALUE} ;;
-            *)   
-    esac    
-
-
+	case "${option}"
+	in
+		m) MODULE=${OPTARG};;
+		r) REGISTRY=${OPTARG};;
+    h) usage; exit;;
+	esac
 done
+
+if [ -z "$MODULE" ]
+then
+    echo "Module is missing" >&2
+    usage
+    exit 1
+fi
+
+if [ -z "REGISTRY" ]
+then
+    REGISTRY = DUMMY_REGISTRY
+fi
 
 DUMMY_MODULE='blueprint'
 DUMMY_REGISTRY='docker.pkg.github.com/martinheinz/python-project-blueprint'
